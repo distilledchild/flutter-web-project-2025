@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'api_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,6 +34,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late Future<String> message;
+
+  @override
+  void initState() {
+    super.initState();
+    message = ApiService().fetchMessage();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,21 +55,24 @@ class _MyHomePageState extends State<MyHomePage> {
           ResponsiveMenu(),
         ],
       ),
-      body: const Center(
-        child: Text(
-          'Welcome to the Flutter Web App!',
-          style: TextStyle(fontSize: 24),
+      body: Center(
+        child: FutureBuilder<String>(
+          future: message,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return Text(
+                snapshot.data ?? 'No message received',
+                style: const TextStyle(fontSize: 24),
+              );
+            }
+          },
         ),
       ),
     );
-  }
-
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
   }
 }
 
@@ -142,6 +156,8 @@ class MenuItem extends StatelessWidget {
 }
 
 class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,6 +168,8 @@ class AboutPage extends StatelessWidget {
 }
 
 class ResearchPage extends StatelessWidget {
+  const ResearchPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -162,6 +180,8 @@ class ResearchPage extends StatelessWidget {
 }
 
 class ProgrammingPage extends StatelessWidget {
+  const ProgrammingPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,6 +192,8 @@ class ProgrammingPage extends StatelessWidget {
 }
 
 class LifePage extends StatelessWidget {
+  const LifePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,6 +204,8 @@ class LifePage extends StatelessWidget {
 }
 
 class ContactPage extends StatelessWidget {
+  const ContactPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
